@@ -1,26 +1,47 @@
 version: '3'
 services:
   backend:
-    build: ./ddang
-    dockerfile: Dockerfile.dev
-    image: 'dbwjd090/ddang-spring'
+    build:
+      context: ./ddang
+      dockerfile: Dockerfile.dev
+    image: 'dbwjd090/ddang-spring:v1'
     container_name: 'ddang-spring'
     ports:
       - '8080:8080'
-    restart: always
     depends_on:
       - database
     environment:
-      SPRING_DATASOURCE_URL:
-      SPRING_DATASOURCE_USERNAME:
-      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/database_name?useUnicode=true
+      SPRING_DATASOURCE_USERNAME: ddang
+      SPRING_DATASOURCE_PASSWORD: 1234
     networks:
-      - networkName
+      - frontend-network
 
   frontend:
-    image: 'dbwjd090/ddang-react:v1'
-    container_name: 'ddang-react'
+    image: node:16-alpine
+    command: sh -c "npm install && npm start"
     ports:
-      - '3000:3000'
-    depends_on:
-      - backend
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./react-ddang:/app
+    container_name: 'ddang-react'
+    networks:
+      - frontend-network
+
+  database:
+    container_name: database
+    image: mariadb
+    volumes:
+      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql
+      - ~/docker/mariadb/var/log/maria:/var/log/maria
+    environment:
+      - MYSQL_ROOT_PASSWORD=dd123
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - 3306:3306
+
+networks:
+  backend-network:
+  frontend-network:
