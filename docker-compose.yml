@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backend:
+    build: ./ddang
+    dockerfile: Dockerfile.dev
+    image: 'dbwjd090/ddang-spring'
+    container_name: 'ddang-spring'
+    ports:
+      - '8080:8080'
+    restart: always
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL:
+      SPRING_DATASOURCE_USERNAME:
+      SPRING_DATASOURCE_PASSWORD:
+    networks:
+      - networkName
+
+  frontend:
+    image: 'dbwjd090/ddang-react:v1'
+    container_name: 'ddang-react'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
