@@ -3,6 +3,7 @@ services:
   backend:
     build:
       context: ./ddang
+      dockerfile: Dockerfile
     image: 'dbwjd090/ddang-spring:v1'
     container_name: 'ddang-spring'
     ports:
