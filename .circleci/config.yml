@@ -8,7 +8,6 @@ jobs:
     working_directory: ~/ddang
     steps:
       - checkout
-      - run: cp .circleci/.some-parameter-file .some-parameter-file
       - run: docker-compose up -d
 
 workflows:
